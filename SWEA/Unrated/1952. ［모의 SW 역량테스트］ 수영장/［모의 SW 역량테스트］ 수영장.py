@@ -1,26 +1,17 @@
-# 시작점 : 1월, 누적금액 : 0원
-
-def dfs(month, sum_cost):
-    global ans
-
-    if month > 12:
-        ans = min(ans, sum_cost)
-        return
-
-    # 1일권으로 모두 구매(다음 재귀: 다음 달을 확인)
-    dfs(month+1, sum_cost + (days[month]*cost[0]))
-    # 1달권 구매(다음 재귀: 다음 달을 확인)
-    dfs(month + 1, sum_cost + cost[1])
-    # 3달권 구매(다음 재귀: 3달 후를 확인)
-    dfs(month + 3, sum_cost + cost[2])
-    # 1년권 구매(다음 재귀: 12달 후를 확인)
-    dfs(month + 12, sum_cost + cost[3])
-
-
 T = int(input())
 for t in range(T):
     cost = list(map(int, input().split()))
     days = [0] + list(map(int, input().split()))
-    ans = 1e9
-    dfs(1, 0)
-    print(f'#{t+1} {ans}')
+    dp = [0] * 13 # 1~12월 최소 금액들을 저장
+
+    for i in range(1,13):
+        # 현재 달의 최소 비용을 계산
+        # 이전달 +1일 권 구입 / 이전 달 + 1달 권 / 3달 전에 3달권 구입 중 최소
+
+        dp[i] = min(dp[i-1]+(days[i]*cost[0]), dp[i-1]+cost[1])
+
+        if i >= 3:
+            dp[i] = min(dp[i], dp[i-3] + cost[2])
+
+    result = min(dp[12], cost[3])
+    print(f'#{t+1} {result}')
